@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../app_config.php';
 if (isset($_SESSION['role']) && $_SESSION['role'] === 'customer') {
     header('Location: ../customer%20dashboard/customer_dashboard.php');
     exit();
@@ -170,7 +171,9 @@ if (isset($_SESSION['role']) && $_SESSION['role'] === 'customer') {
             <button type="submit" name="login" value="1">Login as Customer</button>
         </form>
 
-        <p class="link" style="margin-top: 14px; font-size: 0.82rem; color: #9a4d12;">Demo Customer: customer@gmail.com / customer123</p>
+        <?php if (appEnv('ENABLE_DEMO_ACCOUNTS', '0') === '1'): ?>
+            <p class="link" style="margin-top: 14px; font-size: 0.82rem; color: #9a4d12;">Demo Customer: customer@gmail.com / customer123</p>
+        <?php endif; ?>
         <a class="link" href="signup.php">Sign Up</a>
         <a class="link" href="forgot_password.php?role=customer">Forgot Password?</a>
         <a class="link" href="index.php">Back to Home</a>

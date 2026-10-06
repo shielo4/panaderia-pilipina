@@ -5,21 +5,19 @@
  * Admin credentials and SMTP settings are NO LONGER hardcoded in the app.
  * They are read from (in priority order):
  *   1. Real environment variables - how Render/Docker inject secrets.
- *   2. A local .env file (never committed; blocked from HTTP by .htaccess/router.php).
+ *   2. A local .env file (never committed; blocked from HTTP by .htaccess).
  *
  * Keeping secrets out of the source tree means the repository can be made
  * public without handing out the admin dashboard.
  */
 
-// Candidate .env locations: repo root (preferred, outside the document root)
-// and Project1/ (legacy location, kept working for local development).
+// __DIR__ is the repository root. Keep the legacy Project1 path for older
+// local checkouts.
 function appEnvFiles(): array
 {
-    // __DIR__ = Project1/customer dashboard/dashboard admin
-    $projectRoot = dirname(__DIR__, 2);   // Project1
     return [
-        dirname($projectRoot) . '/.env',  // repo root - preferred
-        $projectRoot . '/.env',           // legacy local dev path
+        __DIR__ . '/.env',
+        __DIR__ . '/Project1/.env',
     ];
 }
 
@@ -79,17 +77,19 @@ function appEnv(string $key, string $default = ''): string
  */
 function appDataDir(): string
 {
-    $projectRoot = dirname(__DIR__, 2);
     $configured = appEnv('DATA_DIR', '');
     if ($configured !== '') {
-        if (!is_dir($configured)) {
-            @mkdir($configured, 0775, true);
+        if (!is_dir($configured) && !mkdir($configured, 0775, true) && !is_dir($configured)) {
+            throw new RuntimeException('Unable to create configured data directory: ' . $configured);
         }
-        if (is_dir($configured) && is_writable($configured)) {
-            return rtrim($configured, '/\\');
+        if (!is_writable($configured)) {
+            throw new RuntimeException('Configured data directory is not writable: ' . $configured);
         }
+
+        return rtrim($configured, '/\\');
     }
-    return $projectRoot;
+
+    return __DIR__;
 }
 
 function appAdminEmail(): string

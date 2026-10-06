@@ -21,10 +21,6 @@ RedirectMatch 404 /\.env
 # Never list directory contents.
 Options -Indexes -MultiViews
 
-# Never hand out the server version.
-ServerSignature Off
-ServerTokens Prod
-
 <IfModule mod_headers.c>
     Header always set X-Content-Type-Options "nosniff"
     Header always set X-Frame-Options "SAMEORIGIN"

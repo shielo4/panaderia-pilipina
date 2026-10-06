@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+bread_accounts.json
+bread_orders.json
+**/bread_accounts.json
+**/bread_orders.json

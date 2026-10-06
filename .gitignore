@@ -1,0 +1,7 @@
+.env
+.env.*
+!.env.example
+/bread_accounts.json
+/bread_orders.json
+/index/bread_accounts.json
+/index/bread_orders.json

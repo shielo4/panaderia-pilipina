@@ -13,6 +13,10 @@ function customerAccountsPath(): string
  */
 function defaultCustomerAccounts(): array
 {
+    if (appEnv('ENABLE_DEMO_ACCOUNTS', '0') !== '1') {
+        return [];
+    }
+
     return [
         [
             'full_name' => 'Customer Demo',
