@@ -1,0 +1,36 @@
+# Apache rules for Panaderia Pilipina.
+#
+# router.php applies these same rules for the PHP built-in server; this file
+# applies them on Apache/PHP-FPM hosts (Render, cPanel, shared hosting).
+# Without it, .env and the JSON data files are world-readable over HTTP.
+
+# Deny dotfiles (.env, .git, .htaccess, .vscode...)
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Deny config, data, and documentation files.
+<FilesMatch "\.(json|env|md|log|lock|sql|bak|ini|yml|yaml|sh)$">
+    Require all denied
+</FilesMatch>
+
+# Same as above, for requests that bypass FilesMatch.
+RedirectMatch 404 /\.git
+RedirectMatch 404 /\.env
+
+# Never list directory contents.
+Options -Indexes -MultiViews
+
+# Never hand out the server version.
+ServerSignature Off
+ServerTokens Prod
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+</IfModule>
+
+# Serve the dashboard entry point at the site root.
+DirectoryIndex index.php index.html
